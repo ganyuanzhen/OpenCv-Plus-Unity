@@ -2,3 +2,7 @@
 	path = source/opencv-4.7.0
 	url = https://gitcode.net/opencv/opencv.git
 	branch = 725e440d278aca07d35a5e8963ef990572b07316
+[submodule "source/opencv-2.3.0"]
+	path = source/opencv-2.3.0
+	url = https://gitcode.net/opencv/opencv.git
+	branch = 7db6c31400d7d931741f2f87f49c09199405ce1c
