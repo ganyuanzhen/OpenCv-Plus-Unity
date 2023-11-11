@@ -181,7 +181,7 @@ fi
 
 # Those modules can be turned off should we have no need for video/capture support
 # -DWITH_AVFOUNDATION=OFF -DWITH_DSHOW=OFF -DWITH_VFW=OFF -DWITH_FFMPEG=OFF
-opencv_dependencies=" -DWITH_VTK=OFF \
+opencv_dependencies=" -DOPENCV_DOWNLOAD_MIRROR_ID=gitcode -DWITH_VTK=OFF \
     -DWITH_1394=OFF \
     -DWITH_GSTREAMER=OFF \
     -DWITH_V4L=OFF \

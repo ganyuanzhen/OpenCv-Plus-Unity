@@ -6,3 +6,7 @@
 	path = source/opencv-2.3.0
 	url = https://gitcode.net/opencv/opencv.git
 	branch = b1459928f576c36e8857bac987c49a0c84d77656
+[submodule "source/dlib-19.4"]
+	path = source/dlib-19.4
+	url = https://gitee.com/mirrors/dlib.git
+	branch = v19.4
