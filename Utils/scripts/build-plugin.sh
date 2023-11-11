@@ -128,7 +128,7 @@ compile_library()
 	local fextra=$5
     local foutval=$6
     local foutmarker=$(printf "%s_%s_%s_OUTPUD_DIR=" "$fname" "$platform" "$arch")
-    compile_cmd="bash build-library.sh --name $fname --version $fver --platform $platform --arch $arch --makesys \"$makesystem\" --options $fopt $rebuild_option $fextra"
+    compile_cmd="bash build-library.sh --name $fname --version $fver --platform $platform --arch $arch --makesys \"$makesystem\" --options \"$fopt\" $rebuild_option $fextra"
     
 	if [ ! -z "$suffix" ]; then
 		compile_cmd="$compile_cmd --suffix $suffix"
@@ -196,6 +196,7 @@ opencv_modules="\
     -D ENABLE_CXX11=ON \
     -D WITH_OPENGL=ON \
     -D WITH_GSTREAMER=ON \
+    -D WITH_EIGEN=OFF \
     -D WITH_QT=OFF"
 opencv_options="$opencv_dependencies $opencv_modules $opencv_issue -DBUILD_EXAMPLES=OFF \
     -DBUILD_SHARED_LIBS=OFF \
@@ -247,7 +248,7 @@ echo ""
 # *****************************************
 # SharpExtern
 # *****************************************
-sharpextern_options="-Wno-deprecated -DCMAKE_TRY_COMPILE_PLATFORM_VARIABLES=CMAKE_WARN_DEPRECATED -DCMAKE_PREFIX_PATH=\"$TEMP/$platform/$arch/libs/opencv-4.7.0\""
+sharpextern_options="-Wno-deprecated -DCMAKE_TRY_COMPILE_PLATFORM_VARIABLES=CMAKE_WARN_DEPRECATED  -DCMAKE_PREFIX_PATH='\"$TEMP/$platform/$arch/build/opencv-4.7.0\"'"
 
 suffix=""
 if [ $type == "trial" ]; then
