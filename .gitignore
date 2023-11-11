@@ -53,3 +53,5 @@ memo
 # source/opencv-*/android/android-opencv/res/*
 # source/opencv-*/cmake/*
 # source/opencv-*/data/*
+
+/bin/

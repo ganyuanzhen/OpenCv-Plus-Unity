@@ -128,18 +128,25 @@ compile_library()
 	local fextra=$5
     local foutval=$6
     local foutmarker=$(printf "%s_%s_%s_OUTPUD_DIR=" "$fname" "$platform" "$arch")
-    compile_cmd="bash build-library.sh --name $fname --platform $platform --arch $arch --makesys $makesystem --version $fver --options $fopt $rebuild_option $fextra"
+    compile_cmd="bash build-library.sh --name $fname --version $fver --platform $platform --arch $arch --makesys \"$makesystem\" --options \"$fopt\" $rebuild_option $fextra"
     
 	if [ ! -z "$suffix" ]; then
 		compile_cmd="$compile_cmd --suffix $suffix"
 	fi
 
-    echo "Compile command: {$compile_cmd}"
+    # echo "Compile command: {$compile_cmd}"
+    # Print out some info
+    echo "name: $fname"
+    echo "version: $fver"
+    echo "platform: $platform"
+    echo "arch: $arch"
+    echo "generator: $makesystem"
 
     # another damn hint to print to console and capture result
-    local console=$(eval "$compile_cmd")
+    $(mkdir -p $TEMP/$platform/$arch/outputs)
+    local console=$(eval "$compile_cmd" |tee $TEMP/$platform/$arch/outputs/$fname)
     local exit_code=$?
-
+    
     # check for error
     if [ $exit_code -ne 0 ]; then
         echo "FATAL ERROR: Failed to compile { lib = $fname, platform = $platform, arch = $arch }"
@@ -174,83 +181,23 @@ fi
 
 # Those modules can be turned off should we have no need for video/capture support
 # -DWITH_AVFOUNDATION=OFF -DWITH_DSHOW=OFF -DWITH_VFW=OFF -DWITH_FFMPEG=OFF
-opencv_dependencies="
-    -DWITH_VTK=OFF \
-    -DWITH_1394=OFF \
-    -DWITH_GSTREAMER=OFF \
-    -DWITH_V4L=OFF \
-    -DWITH_AVFOUNDATION=OFF \
-    -DWITH_DSHOW=OFF \
-    -DWITH_VFW=OFF \
-    -DWITH_FFMPEG=OFF \
-    -DWITH_QT=OFF \
-    -DWITH_GTK=OFF \
-    -DWITH_GPHOTO2=OFF \
-    -DWITH_MATLAB=OFF \
-    -DWITH_TIFF=OFF \
-    -DWITH_JASPER=OFF \
-    -DWITH_JPEG=OFF \
-    -DWITH_PNG=OFF \
-    -DWITH_CUDA=OFF \
-    -DWITH_OPENEXR=OFF \
-    -DWITH_WEBP=OFF \
-    -DWITH_HDR=OFF \
-    -DWITH_SUNRASTER=OFF \
-    -DWITH_PXM=OFF \
-    -Dcustom_hal=OFF \
-    -DWITH_PROTOBUF=OFF \
-    -DWITH_ADE=OFF \
-    -DBUILD_QUIRC=OFF \
-    -DQUIRC=OFF \
-    -DWITH_OPENCL=OFF \
-    -DWITH_IPP=OFF \
-    -DWITH_QUIRC=OFF \
-    -DWITH_OPENCV=OFF \
-    -DWITH_ADE=OFF \
-    -DWITH_CAROTENE=OFF \
-    -DWITH_OPENEXR=OFF \
-    -DWITH_OPENJPEG=OFF \
-    -DWITH_JASPER=OFF \
-    -DWITH_IMGCODEC_HDR=OFF \
-    -DWITH_IMGCODEC_PFM=OFF \
-    -DWITH_IMGCODEC_PXM=OFF \
-    -DWITH_IMGCODEC_SUNRASTER=OFF \
-    -DWITH_IMGCODEC_ZLIB=OFF \
-    -DWITH_IMGCODEC_ZLIB=OFF \
-    -DWITH_Z_LIB=OFF \
-    -DWITH_Z_LIB=OFF \
-    -DWITH_JPEG2000=OFF \
-    -DWITH_JPEG_2000=OFF \
-    -DWITH_IMGCODEC_JPEG2000=OFF \
-    -DWITH_IMGCODEC_JPEG_2000=OFF "
+opencv_dependencies=" -DOPENCV_DOWNLOAD_MIRROR_ID=gitcode -DWITH_VTK=OFF \
+    -D OPENCV_ENABLE_NONFREE=ON \
+    -D WITH_TBB=ON \
+    -D ENABLE_FAST_MATH=1 \
+    -D OPENCV_GENERATE_PKGCONFIG=OFF "
 
 opencv_modules="\
-    -DBUILD_opencv_hdf=OFF \
-    -DBUILD_OPENCV_JAVA=OFF \
-    -DBUILD_OPENCV_PYTHON=OFF \
-    -DBUILD_opencv_python2=OFF \
-    -DBUILD_opencv_python3=OFF \
-    -DBUILD_TESTS=OFF \
-    -DBUILD_PERF_TESTS=OFF \
-    -DBUILD_opencv_apps=OFF \
-    -DBUILD_ANDROID_EXAMPLES=OFF \
-    -DBUILD_DOCS=OFF \
-    -DBUILD_opencv_core=ON \
-    -DBUILD_opencv_imgproc=ON \
-    -DBUILD_opencv_flann=OFF \
-    -DBUILD_opencv_ml=OFF \
-    -DBUILD_opencv_photo=OFF \
-    -DBUILD_opencv_video=OFF \
-    -DBUILD_opencv_imgcodecs=OFF \
-    -DBUILD_opencv_shape=OFF \
-    -DBUILD_opencv_videoio=OFF \
-    -DBUILD_opencv_highgui=OFF \
-    -DBUILD_opencv_objdetect=OFF \
-    -DBUILD_opencv_superres=OFF \
-    -DBUILD_opencv_dnn=OFF \
-    -DBUILD_opencv_features2d=OFF \
-    -DBUILD_opencv_3rdparty=OFF \
-    -DBUILD_opencv_gapi=OFF"
+    -D BUILD_opencv_python3=OFF \
+    -D BUILD_opencv_python2=OFF \
+    -D WITH_WEBP=ON \
+    -D WITH_OPENCL=OFF \
+    -D ETHASHLCL=OFF \
+    -D ENABLE_CXX11=ON \
+    -D WITH_OPENGL=ON \
+    -D WITH_GSTREAMER=ON \
+    -D WITH_EIGEN=OFF \
+    -D WITH_QT=OFF"
 opencv_options="$opencv_dependencies $opencv_modules $opencv_issue -DBUILD_EXAMPLES=OFF \
     -DBUILD_SHARED_LIBS=OFF \
     -DBUILD_WITH_DEBUG_INFO=OFF \
@@ -301,7 +248,7 @@ echo ""
 # *****************************************
 # SharpExtern
 # *****************************************
-sharpextern_options="-Wno-deprecated -DCMAKE_TRY_COMPILE_PLATFORM_VARIABLES=CMAKE_WARN_DEPRECATED -DCMAKE_PREFIX_PATH=\"$TEMP/$platform/$arch/libs/opencv-4.7.0\""
+sharpextern_options="-Wno-deprecated -DCMAKE_TRY_COMPILE_PLATFORM_VARIABLES=CMAKE_WARN_DEPRECATED  -DCMAKE_PREFIX_PATH='\"$TEMP/$platform/$arch/build/opencv-4.7.0\"'"
 
 suffix=""
 if [ $type == "trial" ]; then

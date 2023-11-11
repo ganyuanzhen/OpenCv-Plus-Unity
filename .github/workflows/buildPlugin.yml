@@ -11,10 +11,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [windows-2019]
         
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: true
     # - name: Setup Android NDK
     #   uses: nttld/setup-ndk@v1
     #   id: setup-ndk
@@ -36,3 +38,16 @@ jobs:
       run: bash Utils/build-all-platforms.sh  --type full --version 2.1  --no-android --no-ios --no-macos
       # env:
       #   ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+
+    - name: Zip Results
+      run: |
+        7z a -tzip OpenCvSharpExtern-2.1-x86.zip  bin/OpenCvSharpExtern-2.1/full/windows/x86/OpenCvSharpExtern.dll
+        7z a -tzip OpenCvSharpExtern-2.1-amd64.zip  bin/OpenCvSharpExtern-2.1/full/windows/x86_64/OpenCvSharpExtern.dll
+    
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          OpenCvSharpExtern-2.1-x86.zip
+          OpenCvSharpExtern-2.1-amd64.zip

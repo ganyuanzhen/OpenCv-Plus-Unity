@@ -175,7 +175,7 @@ else
 		"macos" )	params="$params -DCMAKE_OSX_ARCHITECTURES=\"$arch\" -DCMAKE_OSX_DEPLOYMENT_TARGET=\"10.10\"" ;;
 	esac
 
-	cmake_command="cmake -G \"$makesystem\" $params -DCMAKE_INSTALL_PREFIX:PATH=\"$INSTALLDIR\" -DCMAKE_BUILD_TYPE=Release \"$LIBSOURCE\""
+	cmake_command="cmake -G $makesystem $params -DCMAKE_INSTALL_PREFIX:PATH=\"$INSTALLDIR\" -DCMAKE_BUILD_TYPE=Release \"$LIBSOURCE\""
 	echo "Building $platform/$name-$arch project with cmake command:"
 	echo "$cmake_command"
 	required eval $cmake_command
